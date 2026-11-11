@@ -209,6 +209,7 @@ body{background:#170a38 url("data:image/svg+xml,%3Csvg width=%22640%22 height=%2
 #p-today .card{padding:10px 12px;margin-bottom:10px}
 .datebar button{width:34px;height:34px;font-size:1.1rem}.datebar b{font-size:1.1rem}
 #p-today .bar{margin:6px 0 2px;height:10px}
+#sndBtn{border:2px solid #1b0f3a;background:#e6ff1a;color:#1b0f3a;border-radius:12px;font-weight:900;font-size:.8rem;padding:4px 10px;margin-left:6px}#hud .last{margin-left:auto}
 </style>
 </head>
 <body>
@@ -219,7 +220,7 @@ body{background:#170a38 url("data:image/svg+xml,%3Csvg width=%22640%22 height=%2
 </defs></svg>
 <div id="app">
   <div class="top"><div class="tl"><h1 class="ttl"><svg class="tic" viewBox="0 0 200 200"><g fill="#e6ff1a" stroke="#1b0f3a" stroke-width="6" stroke-linejoin="round"><path d="M155.2 93.9 Q172.8 100.0 160.3 107.8 Q147.9 115.6 146.4 124.1 Q144.9 132.6 133.2 131.1 Q121.5 129.6 121.6 148.3 Q121.8 167.0 110.9 157.0 Q100.0 147.0 89.6 155.5 Q79.2 164.0 77.8 148.2 Q76.4 132.5 61.5 135.6 Q46.6 138.8 51.9 126.3 Q57.3 113.9 45.9 106.9 Q34.4 100.0 49.3 94.2 Q64.1 88.3 56.7 75.8 Q49.3 63.2 62.5 64.8 Q75.6 66.4 77.3 50.7 Q78.9 35.1 89.4 42.0 Q100.0 48.9 111.2 39.9 Q122.4 30.9 124.1 47.7 Q125.8 64.5 138.4 63.7 Q150.9 63.0 144.2 75.4 Q137.6 87.8 155.2 93.9Z"/><circle cx="172.4" cy="116.6" r="7.1"/><circle cx="65.2" cy="175.7" r="10.1"/><circle cx="13.2" cy="85.8" r="5.5"/><circle cx="181.0" cy="112.2" r="4.8"/><circle cx="1.0" cy="93.6" r="8.6"/></g></svg>五年級期末衝刺・今日任務</h1><div class="stats" id="stats"></div><div class="dbar" id="dbar"></div></div><div class="tools"><button onclick="openShop()" aria-label="禮物商店" id="giftBtn"><span class="ti"><svg viewBox="0 0 100 100"><g stroke="#1b0f3a" stroke-width="4" stroke-linejoin="round"><rect x="16" y="40" width="68" height="46" rx="6" fill="#4a2bf0"/><rect x="10" y="30" width="80" height="16" rx="5" fill="#e6ff1a"/><rect x="43" y="30" width="14" height="56" fill="#ff2e9a"/><path d="M50 30C36 12 20 14 28 26 32 31 44 30 50 30ZM50 30C64 12 80 14 72 26 68 31 56 30 50 30Z" fill="#ff2e9a"/></g></svg></span><small>禮物</small><i class="bd gbd" id="giftBd"></i></button><button onclick="openChest()" aria-label="寶藏箱"><span class="ti"><svg viewBox="0 0 32 32"><use href="#coinSym" width="32" height="32"/></svg></span><small>寶藏箱</small></button><button onclick="momReview()" aria-label="媽咪專區"><span class="ti">👩</span><small>媽咪</small><i class="bd" id="momBd"></i></button><button onclick="syncInfo()" aria-label="雲端同步" id="syncDot"><span class="ti" id="syncIc">☁️</span><small id="syncTx">同步</small></button></div></div>
-  <div id="hud" onclick="openChest()"><span id="hudI"></span><span>目前共 <u id="hudN">0</u> 點</span><span class="last" id="hudLast"></span></div>
+  <div id="hud" onclick="openChest()"><span id="hudI"></span><span>目前共 <u id="hudN">0</u> 點</span><span class="last" id="hudLast"></span><button id="sndBtn" onclick="event.stopPropagation();testSound()" aria-label="測試聲音">🔊 聲音測試</button></div>
   <div class="panel on" id="p-today"></div>
   <div class="panel" id="p-cal"></div>
   <div class="nav" id="nav">
@@ -420,15 +421,24 @@ function progText(d){const p=enProg(d),a=[];if(p.need.s)a.push('句型 '+p.got.s
 let AC=null;
 function actx(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
 function audioOK(){return !!(AC&&AC.state==='running')}
-function coinSound(k,delay){const a=actx();if(!a||a.state!=='running')return;k=Math.max(1,Math.min(40,Math.round(k||1)));
-  if(!a.__m){const c=a.createDynamicsCompressor();c.threshold.value=-12;c.knee.value=6;c.ratio.value=10;const g=a.createGain();g.gain.value=1.8;c.connect(g);g.connect(a.destination);a.__m=c}
-  const t=a.currentTime+(delay||0);
-  for(let i=0;i<k;i++){const st=t+i*.12;
-    [[987.77,0,.085],[1318.51,.085,.5]].forEach(function(x){const o=a.createOscillator(),g=a.createGain(),b=st+x[1];o.type='square';o.frequency.value=x[0];
-      g.gain.setValueAtTime(.0001,b);g.gain.exponentialRampToValueAtTime(.5,b+.004);g.gain.setValueAtTime(.5,b+.02);g.gain.exponentialRampToValueAtTime(.0001,b+x[2]);
-      o.connect(g);g.connect(a.__m);o.start(b);o.stop(b+x[2]+.03)})}}
-function fanfare(){const a=actx();if(!a||a.state!=='running')return;const t=a.currentTime+.9;[523.25,659.25,783.99,1046.5,1318.51].forEach(function(f,i){const o=a.createOscillator(),g=a.createGain(),st=t+i*.11;o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,st);g.gain.exponentialRampToValueAtTime(.3,st+.01);g.gain.exponentialRampToValueAtTime(.0001,st+.5);o.connect(g);g.connect(a.destination);o.start(st);o.stop(st+.55)})}
-['pointerdown','touchstart','touchend','mousedown','keydown','click'].forEach(ev=>document.addEventListener(ev,()=>actx(),{capture:true,passive:true}));
+function unlockAudio(){const a=actx();if(!a)return;try{const b=a.createBuffer(1,1,22050),n=a.createBufferSource();n.buffer=b;n.connect(a.destination);n.start(0)}catch(e){}}
+function audioReady(cb){const a=actx();if(!a)return;if(a.state==='running'){cb(a);return}try{const p=a.resume();if(p&&p.then)p.then(function(){if(a.state==='running')cb(a)}).catch(function(){})}catch(e){}}
+function sndBus(a){if(!a.__m){const c=a.createDynamicsCompressor();c.threshold.value=-12;c.knee.value=6;c.ratio.value=10;const g=a.createGain();g.gain.value=1.8;c.connect(g);g.connect(a.destination);a.__m=c}return a.__m}
+function coinSound(k,delay){k=Math.max(1,Math.min(40,Math.round(k||1)));
+  audioReady(function(a){const bus=sndBus(a),t=a.currentTime+(delay||0)+.02;
+    for(let i=0;i<k;i++){const st=t+i*.12;
+      [[987.77,0,.085],[1318.51,.085,.5]].forEach(function(x){const o=a.createOscillator(),g=a.createGain(),b=st+x[1];o.type='square';o.frequency.value=x[0];
+        g.gain.setValueAtTime(.0001,b);g.gain.exponentialRampToValueAtTime(.5,b+.004);g.gain.setValueAtTime(.5,b+.02);g.gain.exponentialRampToValueAtTime(.0001,b+x[2]);
+        o.connect(g);g.connect(bus);o.start(b);o.stop(b+x[2]+.03)})}})}
+/* 兌換成功音效：收銀機「喀」＋上升音階＋鈴聲（和金幣聲不同） */
+function redeemSound(){audioReady(function(a){const bus=sndBus(a),t=a.currentTime+.03;
+  try{const len=Math.floor(a.sampleRate*.05),buf=a.createBuffer(1,len,a.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);const n=a.createBufferSource(),g=a.createGain();n.buffer=buf;g.gain.value=.9;n.connect(g);g.connect(bus);n.start(t)}catch(e){}
+  [[523.25,.08,.09],[659.25,.16,.09],[783.99,.24,.09],[1046.5,.32,.12],[1318.51,.44,.5],[1567.98,.44,.5]].forEach(function(x){const o=a.createOscillator(),g=a.createGain(),b=t+x[1];o.type='triangle';o.frequency.value=x[0];g.gain.setValueAtTime(.0001,b);g.gain.exponentialRampToValueAtTime(.45,b+.008);g.gain.exponentialRampToValueAtTime(.0001,b+x[2]);o.connect(g);g.connect(bus);o.start(b);o.stop(b+x[2]+.03)});
+  [[2637,.44,.9],[3135.96,.5,.8]].forEach(function(x){const o=a.createOscillator(),g=a.createGain(),b=t+x[1];o.type='sine';o.frequency.value=x[0];g.gain.setValueAtTime(.0001,b);g.gain.exponentialRampToValueAtTime(.25,b+.005);g.gain.exponentialRampToValueAtTime(.0001,b+x[2]);o.connect(g);g.connect(bus);o.start(b);o.stop(b+x[2]+.03)})})}
+function testSound(){unlockAudio();coinSound(2,0);const a=AC;toast(a&&a.state==='running'?'🔊 聽到「叮叮」了嗎？沒聽到請調高音量、關掉靜音':'🔇 請再點一次，並確認手機音量與靜音開關')}
+function fanfare(){const a=actx();if(!a)return;try{a.resume()}catch(e){}const t=a.currentTime+.9;[523.25,659.25,783.99,1046.5,1318.51].forEach(function(f,i){const o=a.createOscillator(),g=a.createGain(),st=t+i*.11;o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,st);g.gain.exponentialRampToValueAtTime(.3,st+.01);g.gain.exponentialRampToValueAtTime(.0001,st+.5);o.connect(g);g.connect(a.destination);o.start(st);o.stop(st+.55)})}
+try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
+['pointerdown','touchstart','touchend','mousedown','keydown','click'].forEach(ev=>document.addEventListener(ev,()=>{actx();unlockAudio()},{capture:true,passive:true}));
 function hud(last){$('hudI').innerHTML=COIN;$('hudN').textContent=fmtP(coinsTotal());if(last!==undefined)$('hudLast').textContent=last}
 function coinFx(n,msg,head){const tot=coinsTotal();hud('最近 +'+fmtP(n)+' 點');
   const k=Math.max(0,Math.min(3,Math.ceil(n)));let dr='';for(let i=0;i<k;i++)dr+='<i style="animation-delay:'+(i*.3)+'s">'+COIN+'</i>';
@@ -566,7 +576,7 @@ document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>show(b.dataset
 
 /* ---------- 英文練習（全螢幕，從任務進入） ---------- */
 function loadEn(cb){const box=$('enFrame');let f=box.firstElementChild;
-  if(!f){f=document.createElement('iframe');f.onload=()=>{f.dataset.ok=1;cb(f.contentWindow)};f.srcdoc=JSON.parse($('src-en').textContent);box.appendChild(f)}
+  if(!f){f=document.createElement('iframe');f.onload=()=>{f.dataset.ok=1;try{['pointerdown','touchstart','touchend','mousedown','keydown','click'].forEach(ev=>f.contentDocument.addEventListener(ev,()=>{actx();unlockAudio()},{capture:true,passive:true}))}catch(e){}cb(f.contentWindow)};f.srcdoc=JSON.parse($('src-en').textContent);box.appendChild(f)}
   else if(f.dataset.ok)cb(f.contentWindow);else f.addEventListener('load',()=>cb(f.contentWindow),{once:true})}
 const UNAME={L1:'星期',L2:'作息',L3:'天氣',L4:'科目',R1:'Review 1',R2:'Review 2',PF:'自然拼讀',CF:'農曆新年'};
 function enBarSecs(e){const us=[e.unit].concat(e.unit2&&e.unit2!==e.unit?[e.unit2]:[]);
@@ -679,7 +689,7 @@ function redeem(id){const s=scState(),it=DEFAULT_SHOP_ITEMS.concat(s.customRewar
 function redeemGo(id){const s=scState(),it=DEFAULT_SHOP_ITEMS.concat(s.customRewards).find(x=>x.id===id);if(!it)return;
   const before=coinsTotal();if(before<it.cost){toast('點數還不夠喔！');openShop();return}
   s.spentCoins=(s.spentCoins||0)+it.cost;s.backpack.unshift({id:'ticket_'+Date.now(),title:it.title,icon:it.icon,date:new Date().toLocaleDateString('zh-TW'),redeemed:false});
-  wr(SC_KEY,s);coinSound();hud();renderStats();
+  wr(SC_KEY,s);redeemSound();hud();renderStats();
   ovShow('<div class="row"><h3>🎉 兌換成功！</h3>'+CLOSE+'</div><div class="itm" style="text-align:center"><div style="font-size:3rem;line-height:1.2">'+it.icon+'</div><b style="font-size:1.1rem">'+esc(it.title)+'</b><div class="sub">請找媽咪核銷這張兌換券</div></div>'+
    '<div class="itm" style="font-size:1.05rem;line-height:2.1"><div class="row"><span>兌換前有</span><b>'+fmtP(before)+' 點</b></div><div class="row"><span>用掉</span><b style="color:#e11d48">− '+fmtP(it.cost)+' 點</b></div><div style="border-top:2px dashed var(--bd)"></div><div class="row"><span>現在剩下</span><b style="color:var(--ok);font-size:1.35rem">'+fmtP(coinsTotal())+' 點</b></div></div>'+
    '<button class="btn" onclick="openShop()">🎁 回禮物商店</button>')}
